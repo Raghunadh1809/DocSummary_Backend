@@ -11,6 +11,7 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
+app.set("trust proxy", 1);
 // Security middleware
 app.use(helmet());
 app.use(
@@ -20,7 +21,6 @@ app.use(
   })
 );
 
-app.set("trust proxy", 1);
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
