@@ -10,7 +10,6 @@ const app = express();
 
 // Connect to MongoDB
 connectDB();
-
 app.set("trust proxy", 1);
 // Security middleware
 app.use(helmet());
@@ -25,7 +24,7 @@ app.use(
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  trustProxy: true,
+  trustProxy: true, // Add this
   message: "Too many requests",
 });
 app.use(limiter);
@@ -48,15 +47,6 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Root endpoint
-app.get("/", (req, res) => {
-  res.json({
-    message: "Document Summary API",
-    version: "1.0.0",
-    status: "running",
-  });
-});
-
 // Error handling middleware
 app.use(errorHandler);
 
@@ -65,14 +55,9 @@ app.use("*", (req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-// Export for Vercel serverless function
-module.exports = app;
+const PORT = process.env.PORT || 5000;
 
-// Only start server if running locally (not on Vercel)
-if (require.main === module) {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+});
